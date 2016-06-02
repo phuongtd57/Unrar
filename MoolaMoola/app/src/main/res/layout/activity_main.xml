@@ -29,6 +29,7 @@
 </RelativeLayout>
 
     <RelativeLayout
+            android:id="@+id/rlSaveFolder"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/rlChooseFile"
             android:layout_width="match_parent"
@@ -51,6 +52,13 @@
                   android:layout_height="wrap_content"/>
 
     </RelativeLayout>
+
+    <Button android:layout_width="match_parent"
+            android:id="@+id/btExtract"
+            android:layout_below="@+id/rlSaveFolder"
+            android:layout_marginTop="10dp"
+            android:text="Extract"
+            android:layout_height="wrap_content"/>
 
     <ProgressBar android:layout_width="wrap_content"
                  android:visibility="gone"
