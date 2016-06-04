@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +17,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phuongtd.moolamoola.dialog.PasswordDialog;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import de.innosystec.unrar.Archive;
+import de.innosystec.unrar.exception.RarException;
 import de.innosystec.unrar.rarfile.FileHeader;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
@@ -45,6 +48,10 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     String targetFolder = "/sdcard";
     Uri uriFile = null;
     ProgressBar progressBar;
+    String message = "";
+    String password = "";
+
+    private final String FILE_HAVE_PASS = "File have password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,26 +110,22 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
                     return;
                 }
 
-                extractFile();
+                new MyAsync().execute();
             }
         });
     }
 
     void extractFile() {
+        message = "";
         //File dir = Environment.getExternalStorageDirectory();
         progressBar.setVisibility(View.VISIBLE);
         File f = new File(uriFile.getPath());
         Archive a = null;
         try {
-            a = new Archive(f, "", false); // extract mode
-            if (a.isPass()) {
-                Log.d("phuongtd", "Pass word");
-                a = new Archive(f, "123", false);
-            }
+            a = new Archive(f, password, false); // extract mode
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         HashSet<String> hashSet = new HashSet<>();
 
@@ -130,49 +133,73 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
             a.getMainHeader().print();
             FileHeader fh = a.nextFileHeader();
             String fileName = fh.getFileNameString().replace('\\', '/');
-            String folderName = null;
-            if (fileName.contains("/")) {
-                folderName = fileName.split("/")[0];
-                String folderString = targetFolder + "/" + folderName;
-                File folder = new File(folderString);
-                if (!folder.exists()) {
-                    folder.mkdir();
+            String tempFile = targetFolder + "/" + "temp";
+
+            try {
+                FileOutputStream os = new FileOutputStream(tempFile);
+                a.extractFile(fh, os);
+                os.close();
+            } catch (RarException e) {
+                if (e.getMessage().equalsIgnoreCase("crcError")) {
+                    message = FILE_HAVE_PASS;
+                    return;
+                }
+            } catch (Exception e) {
+                message = "Cant extract this file, " + e.getMessage();
+                return;
+            } finally {
+                File fileTemp = new File(tempFile);
+                if (fileTemp.exists()) {
+                    fileTemp.delete();
                 }
             }
 
-            while (fh != null) {
-                Log.d("phuongtd", "Packname before: " + fh.getFileNameString());
-                Log.d("phuongtd", "Packname after: " + fh.getFileNameString().replace('\\' , '/'));
-                try {
-                    if (folderName == null || (folderName != null && !fh.getFileNameString().equalsIgnoreCase(folderName))) {
-                        fileName = fh.getFileNameString().replace('\\', '/');
-                        String[] listFolder = fileName.split("/");
-                        String longName = listFolder[0];
-                        hashSet.add(longName);
-                        for (int i = 1; i < listFolder.length - 1; i++) {
-                            String s = listFolder[i];
-                            longName = longName + "/" + s;
-                            hashSet.add(longName);
-                            File folder = new File(targetFolder + "/" + longName);
-                            if (!folder.exists()) {
-                                folder.mkdir();
+
+            if (message.equalsIgnoreCase("")) {
+                String folderName = null;
+                if (fileName.contains("/")) {
+                    folderName = fileName.split("/")[0];
+                    String folderString = targetFolder + "/" + folderName;
+                    File folder = new File(folderString);
+                    if (!folder.exists()) {
+                        folder.mkdir();
+                    }
+                }
+
+                while (fh != null) {
+                    Log.d("phuongtd", "Packname before: " + fh.getFileNameString());
+                    Log.d("phuongtd", "Packname after: " + fh.getFileNameString().replace('\\', '/'));
+                    try {
+                        if (folderName == null || (folderName != null && !fh.getFileNameString().equalsIgnoreCase(folderName))) {
+                            fileName = fh.getFileNameString().replace('\\', '/');
+                            String[] listFolder = fileName.split("/");
+                            String longName = listFolder[0];
+                            //hashSet.add(longName);
+                            for (int i = 1; i < listFolder.length - 1; i++) {
+                                String s = listFolder[i];
+                                longName = longName + "/" + s;
+                                hashSet.add(longName);
+                                File folder = new File(targetFolder + "/" + longName);
+                                if (!folder.exists()) {
+                                    folder.mkdir();
+                                }
+                            }
+                            if (!hashSet.contains(fileName)) {
+                                File out = new File("", targetFolder + "/" + fileName);
+                                System.out.println(out.getAbsolutePath());
+                                FileOutputStream os = new FileOutputStream(out);
+                                a.extractFile(fh, os);
+                                os.close();
                             }
                         }
-                        if (!hashSet.contains(fileName)) {
-                            File out = new File("", targetFolder + "/" + fileName);
-                            System.out.println(out.getAbsolutePath());
-                            FileOutputStream os = new FileOutputStream(out);
-                            a.extractFile(fh, os);
-                            os.close();
-                        }
+                    } catch (Exception e) {
+                        message = "Cant extract this file, " + e.getMessage();
+                        return;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    fh = a.nextFileHeader();
                 }
-                fh = a.nextFileHeader();
             }
         }
-        progressBar.setVisibility(View.GONE);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -226,5 +253,38 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     @Override
     public void onCancelChooser() {
         mDialog.dismiss();
+    }
+
+    public class MyAsync extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            extractFile();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (message.equalsIgnoreCase("")) {
+                Toast.makeText(MainActivity.this, "Extract successfully", Toast.LENGTH_SHORT).show();
+            } else if (message.equalsIgnoreCase(FILE_HAVE_PASS)) {
+                PasswordDialog passwordDialog = new PasswordDialog(MainActivity.this, new PasswordDialog.ActionImpl() {
+                    @Override
+                    public void execute(String pass) {
+                        password = pass;
+                        new MyAsync().execute();
+                    }
+                });
+                passwordDialog.show();
+            } else {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }
