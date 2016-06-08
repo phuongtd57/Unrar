@@ -1,166 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#9C27B0">
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#9C27B0">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:textColor="#fff"
-            android:text="Unrar"
-            android:textSize="19sp"
-            android:layout_marginLeft="10dp"
-            android:textStyle="bold"
-            android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:textColor="#fff"
+                android:text="Unrar"
+                android:textSize="19sp"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
     <ImageView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/bg_topbar_shadow"/>
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               android:background="@drawable/bg_topbar_shadow"/>
 
-    <RelativeLayout
-        android:id="@+id/rlChooseFile"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <Button
-            android:layout_alignParentRight="true"
-            android:background="@drawable/bt_browser_bg"
-            android:id="@+id/btSelectRarFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#9C27B0"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:text="BROWSE" />
-
-        <EditText
-            android:id="@+id/tvFileSelect"
-            android:layout_width="match_parent"
-            android:hint="Select rar file"
-            android:singleLine="true"
-            android:textColorHighlight="#9C27B0"
-            android:textColorLink="#9C27B0"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toLeftOf="@+id/btSelectRarFile" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rlSaveFolder"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp">
-
-        <Button
-            android:layout_alignParentRight="true"
-            android:id="@+id/btSelectTargetFolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:textColor="#9C27B0"
-            android:background="@drawable/bt_browser_bg"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:text="BROWSE" />
-
-        <EditText
-            android:id="@+id/tvFolderTarget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHighlight="#9C27B0"
-            android:singleLine="true"
-            android:textColorLink="#9C27B0"
-            android:layout_centerVertical="true"
-            android:hint="Select folder to save"
-            android:layout_marginLeft="5dp"
-            android:layout_toLeftOf="@+id/btSelectTargetFolder" />
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="70dp">
-
-        <com.daimajia.numberprogressbar.NumberProgressBar
-            android:id="@+id/numberBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
-            android:visibility="gone"
-            custom:progress_reached_bar_height="6dp"
-            custom:progress_reached_color="#9C27B0"
-            custom:progress_text_color="#9C27B0"
-            custom:progress_text_offset="1dp"
-            custom:progress_text_size="10sp"
-            custom:progress_text_visibility="visible"
-            custom:progress_unreached_bar_height="0.75dp"
-            custom:progress_unreached_color="#CCCCCC" />
-
-        <ProgressBar
-            android:layout_marginTop="10dp"
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone" />
-
-    </LinearLayout>
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-   <LinearLayout
-       android:layout_marginTop="10dp"
-       android:orientation="horizontal"
-       android:weightSum="2"
-       android:layout_width="match_parent"
-       android:layout_height="40dp">
 
-       <Button
-           android:layout_width="0dp"
-           android:id="@+id/btListFile"
-           android:textColor="#000"
-           android:layout_marginLeft="10dp"
-           android:background="@drawable/button_bg"
-           android:layout_marginRight="10dp"
-           android:text="List Rar File"
-           android:layout_weight="1"
-           android:layout_height="match_parent">
+            <RelativeLayout
+                    android:id="@+id/rlChooseFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
 
-       </Button>
+                <Button
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/bt_browser_bg"
+                        android:id="@+id/btSelectRarFile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#9C27B0"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="BROWSE"/>
 
-       <Button
-           android:layout_width="0dp"
-           android:id="@+id/btExtract"
-           android:textColor="#000"
-           android:layout_marginLeft="10dp"
-           android:layout_marginRight="10dp"
-           android:background="@drawable/button_bg"
-           android:layout_weight="1"
-           android:text="Extract File"
-           android:layout_height="match_parent">
+                <EditText
+                        android:id="@+id/tvFileSelect"
+                        android:layout_width="match_parent"
+                        android:hint="Select rar file"
+                        android:singleLine="true"
+                        android:textColorHighlight="#9C27B0"
+                        android:textColorLink="#9C27B0"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toLeftOf="@+id/btSelectRarFile"/>
 
-       </Button>
-   </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:id="@+id/rlSaveFolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp">
+
+                <Button
+                        android:layout_alignParentRight="true"
+                        android:id="@+id/btSelectTargetFolder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textColor="#9C27B0"
+                        android:background="@drawable/bt_browser_bg"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="BROWSE"/>
+
+                <EditText
+                        android:id="@+id/tvFolderTarget"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHighlight="#9C27B0"
+                        android:singleLine="true"
+                        android:textColorLink="#9C27B0"
+                        android:layout_centerVertical="true"
+                        android:hint="Select folder to save"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toLeftOf="@+id/btSelectTargetFolder"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="70dp">
+
+                <com.daimajia.numberprogressbar.NumberProgressBar
+                        android:id="@+id/numberBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="20dp"
+                        android:visibility="gone"
+                        custom:progress_reached_bar_height="6dp"
+                        custom:progress_reached_color="#9C27B0"
+                        custom:progress_text_color="#9C27B0"
+                        custom:progress_text_offset="1dp"
+                        custom:progress_text_size="10sp"
+                        custom:progress_text_visibility="visible"
+                        custom:progress_unreached_bar_height="0.75dp"
+                        custom:progress_unreached_color="#CCCCCC"/>
+
+                <ProgressBar
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center_horizontal"
+                        android:visibility="gone"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp">
+
+                <Button
+                        android:layout_width="0dp"
+                        android:id="@+id/btListFile"
+                        android:textColor="#000"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/button_bg"
+                        android:layout_marginRight="10dp"
+                        android:text="List Rar File"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent">
+
+                </Button>
+
+                <Button
+                        android:layout_width="0dp"
+                        android:id="@+id/btExtract"
+                        android:textColor="#000"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/button_bg"
+                        android:layout_weight="1"
+                        android:text="Extract File"
+                        android:layout_height="match_parent">
+
+                </Button>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/llFileInfo"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="File name: "
+                            android:textStyle="bold"
+                            android:textColor="#525252"/>
+
+                    <TextView android:layout_width="match_parent"
+                              android:textColor="#323232"
+                              android:id="@+id/tvFilePath"
+                              android:text="cdcard/nadnv/"
+                              android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="File size: "
+                            android:textStyle="bold"
+                            android:textColor="#525252"/>
+
+                    <TextView android:layout_width="match_parent"
+                              android:textColor="#323232"
+                              android:id="@+id/tvFileSize"
+                              android:text="5.4 mb"
+                              android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

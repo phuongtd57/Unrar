@@ -13,13 +13,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.phuongtd.moolamoola.dialog.PasswordDialog;
+import com.example.phuongtd.moolamoola.file.FileUtils;
 import com.example.phuongtd.moolamoola.fileExplore.FileExploreActivity;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
@@ -51,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     ProgressBar progressBar;
     String password = "";
     NumberProgressBar numberProgressBar;
+    LinearLayout llFileInfo;
+    TextView tvFilePath;
+    TextView tvFileSize;
     int numOfFile = 1;
     int currentExtractFile = 0;
     private final String FILE_HAVE_PASS = "File have password";
@@ -93,6 +94,10 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         tvFolderTarget = (EditText) findViewById(R.id.tvFolderTarget);
         btExtract = (Button) findViewById(R.id.btExtract);
         numberProgressBar = (NumberProgressBar) findViewById(R.id.numberBar);
+        tvFilePath = (TextView) findViewById(R.id.tvFilePath);
+        tvFileSize = (TextView) findViewById(R.id.tvFileSize);
+        llFileInfo = (LinearLayout) findViewById(R.id.llFileInfo);
+        llFileInfo.setVisibility(View.GONE);
         btSelectTargetFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +138,9 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
                 String uri = data.getStringExtra("FILE");
                 tvFileSelect.setText(uri);
                 uriFile = uri;
+                llFileInfo.setVisibility(View.VISIBLE);
+                tvFilePath.setText(uri);
+                tvFileSize.setText(FileUtils.getFileLength(new File(uri)));
             }
         }
     }
