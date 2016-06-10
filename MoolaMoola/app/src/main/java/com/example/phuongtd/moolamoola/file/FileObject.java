@@ -1,5 +1,8 @@
 package com.example.phuongtd.moolamoola.file;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by qs109 on 6/7/2016.
  */
@@ -12,6 +15,8 @@ public class FileObject
     private String extension;
     private String volume;
     private String name;
+
+    List<FileObject> childs;
 
     public String getPath()
     {
@@ -76,5 +81,13 @@ public class FileObject
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<FileObject> getChilds() {
+        return childs;
+    }
+
+    public void setChilds(List<FileObject> childs) {
+        this.childs = childs;
     }
 }

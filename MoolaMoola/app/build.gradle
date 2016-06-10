@@ -43,4 +43,5 @@ dependencies {
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
     compile 'org.gnu:gnu-crypto:2.0.1'
     compile files('libs/java-unrar-decryption-supported-20120903.jar')
+    compile files('libs/unrar-lib.jar')
 }

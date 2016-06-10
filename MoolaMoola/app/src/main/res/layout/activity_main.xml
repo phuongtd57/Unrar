@@ -147,12 +147,12 @@
 
                 <Button
                         android:layout_width="0dp"
-                        android:id="@+id/btListFile"
+                        android:id="@+id/btPreview"
                         android:textColor="#000"
                         android:layout_marginLeft="10dp"
                         android:background="@drawable/button_bg"
                         android:layout_marginRight="10dp"
-                        android:text="List Rar File"
+                        android:text="Preview"
                         android:layout_weight="1"
                         android:layout_height="match_parent">
 

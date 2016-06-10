@@ -1,10 +1,7 @@
 package com.example.phuongtd.moolamoola;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ClipData;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,20 +10,24 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.phuongtd.moolamoola.dialog.PasswordDialog;
 import com.example.phuongtd.moolamoola.file.FileUtils;
 import com.example.phuongtd.moolamoola.fileExplore.FileExploreActivity;
-import com.nononsenseapps.filepicker.FilePickerActivity;
+import com.example.phuongtd.moolamoola.fileExplore.PreviewActivity;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import de.innosystec.unrar.Archive;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     Button btSelectRarFile;
     Button btSelectTargetFolder;
     Button btExtract;
+    Button btPreview;
     EditText tvFileSelect;
     EditText tvFolderTarget;
     boolean hasChooseFolder = false;
@@ -97,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         tvFilePath = (TextView) findViewById(R.id.tvFilePath);
         tvFileSize = (TextView) findViewById(R.id.tvFileSize);
         llFileInfo = (LinearLayout) findViewById(R.id.llFileInfo);
+        btPreview = (Button) findViewById(R.id.btPreview);
+
+
         llFileInfo.setVisibility(View.GONE);
         btSelectTargetFolder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         btExtract.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (uriFile == null) {
+                    Toast.makeText(MainActivity.this, "Please choose  file", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (!uriFile.endsWith(".rar")) {
                     Toast.makeText(MainActivity.this, "Please choose .rar file", Toast.LENGTH_LONG).show();
                     return;
@@ -124,9 +133,22 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
                     Toast.makeText(MainActivity.this, "Please choose folder to save file", Toast.LENGTH_LONG).show();
                     return;
                 }
-
                 new MyAsync().execute();
             }
+        });
+
+        btPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (uriFile == null) {
+                    Toast.makeText(MainActivity.this, "Please choose .rar file", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
+                intent.putExtra("file", uriFile);
+                startActivity(intent);
+            }
+
         });
     }
 
@@ -134,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_FILE_CODE) {
-            if (data!=null && data.hasExtra("FILE")) {
+            if (data != null && data.hasExtra("FILE")) {
                 String uri = data.getStringExtra("FILE");
                 tvFileSelect.setText(uri);
                 uriFile = uri;
