@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,7 +20,9 @@ import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.phuongtd.moolamoola.dialog.PasswordDialog;
+import com.example.phuongtd.moolamoola.file.HistoryItem;
 import com.example.phuongtd.moolamoola.file.FileUtils;
+import com.example.phuongtd.moolamoola.fileExplore.ExtractHistory;
 import com.example.phuongtd.moolamoola.fileExplore.FileExploreActivity;
 import com.example.phuongtd.moolamoola.fileExplore.PreviewActivity;
 
@@ -28,11 +31,16 @@ import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.UUID;
 
 import de.innosystec.unrar.Archive;
 import de.innosystec.unrar.exception.RarException;
 import de.innosystec.unrar.rarfile.FileHeader;
+import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements DirectoryChooserFragment.OnFragmentInteractionListener {
     final int FILE_CODE = 26;
@@ -57,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     int numOfFile = 1;
     int currentExtractFile = 0;
     private final String FILE_HAVE_PASS = "File have password";
-
+    ImageView btHistory;
     File f;
     Archive a;
     FileHeader fh;
@@ -100,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         tvFileSize = (TextView) findViewById(R.id.tvFileSize);
         llFileInfo = (LinearLayout) findViewById(R.id.llFileInfo);
         btPreview = (Button) findViewById(R.id.btPreview);
-
+        btHistory = (ImageView) findViewById(R.id.btHistory);
 
         llFileInfo.setVisibility(View.GONE);
         btSelectTargetFolder.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +157,14 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
                 startActivity(intent);
             }
 
+        });
+
+        btHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ExtractHistory.class);
+                startActivity(intent);
+            }
         });
     }
 
@@ -283,6 +299,26 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
             super.onPostExecute(aVoid);
             if (aVoid.equalsIgnoreCase("")) {
                 Toast.makeText(MainActivity.this, "Extract successfully", Toast.LENGTH_SHORT).show();
+
+                Realm realm = Realm.getInstance(MainActivity.this);
+                try {
+                    realm.beginTransaction();
+                    HistoryItem eh = new HistoryItem();
+                    eh.setId(UUID.randomUUID().toString());
+                    eh.setName(uriFile);
+                    eh.setFilePath(uriFile);
+                    eh.setFolderSave(targetFolder);
+                    eh.setStatus("SUCCESS");
+                    Date date = new Date();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm - dd MMM");
+                    eh.setTime(simpleDateFormat.format(date));
+                    realm.copyToRealm(eh);
+                } finally {
+                    realm.commitTransaction();
+                    realm.close();
+                }
+
+
             } else if (aVoid.equalsIgnoreCase(FILE_HAVE_PASS)) {
                 PasswordDialog passwordDialog = new PasswordDialog(MainActivity.this, new PasswordDialog.ActionImpl() {
                     @Override
