@@ -23,7 +23,6 @@
             android:textSize="17sp"
             android:id="@+id/tvFilePath"
             android:textColor="#000"
-            android:text="nsfbnofsbnfsobnsfnnfsbsbsbfs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

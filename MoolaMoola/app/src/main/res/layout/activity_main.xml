@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#9C27B0">
@@ -32,7 +33,7 @@
             android:src="@drawable/clock_history" />
 
         <ImageView
-            android:id="@+id/brSearch"
+            android:id="@+id/btSearch"
             android:layout_width="25dp"
             android:layout_toLeftOf="@+id/btHistory"
             android:layout_centerVertical="true"
@@ -43,12 +44,53 @@
     </RelativeLayout>
 
     <ImageView
+        android:layout_below="@+id/header"
+        android:id="@+id/bgShadow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:background="@drawable/bg_topbar_shadow" />
 
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/btPreview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg"
+            android:text="Preview"
+            android:textColor="#000">
+
+        </Button>
+
+        <Button
+            android:id="@+id/btExtract"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg"
+            android:text="Extract File"
+            android:textColor="#000">
+
+        </Button>
+    </LinearLayout>
+
     <ScrollView
+        android:layout_above="@+id/bottom"
+        android:layout_below="@+id/bgShadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -138,7 +180,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="20dp"
                     android:visibility="gone"
-                    custom:progress_reached_bar_height="6dp"
+                    custom:progress_reached_bar_height="10dp"
                     custom:progress_reached_color="#9C27B0"
                     custom:progress_text_color="#9C27B0"
                     custom:progress_text_offset="1dp"
@@ -156,41 +198,6 @@
                     android:layout_marginTop="10dp"
                     android:visibility="gone" />
 
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <Button
-                    android:id="@+id/btPreview"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_bg"
-                    android:text="Preview"
-                    android:textColor="#000">
-
-                </Button>
-
-                <Button
-                    android:id="@+id/btExtract"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_bg"
-                    android:text="Extract File"
-                    android:textColor="#000">
-
-                </Button>
             </LinearLayout>
 
             <LinearLayout
@@ -247,4 +254,5 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+
+</RelativeLayout>

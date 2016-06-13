@@ -22,9 +22,10 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.example.phuongtd.moolamoola.dialog.PasswordDialog;
 import com.example.phuongtd.moolamoola.file.HistoryItem;
 import com.example.phuongtd.moolamoola.file.FileUtils;
-import com.example.phuongtd.moolamoola.fileExplore.ExtractHistory;
+import com.example.phuongtd.moolamoola.fileExplore.HistoryActivity;
 import com.example.phuongtd.moolamoola.fileExplore.FileExploreActivity;
 import com.example.phuongtd.moolamoola.fileExplore.PreviewActivity;
+import com.example.phuongtd.moolamoola.fileExplore.SearchActivity;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
@@ -34,7 +35,6 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.UUID;
 
 import de.innosystec.unrar.Archive;
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     int currentExtractFile = 0;
     private final String FILE_HAVE_PASS = "File have password";
     ImageView btHistory;
+    ImageView btSearch;
     File f;
     Archive a;
     FileHeader fh;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         llFileInfo = (LinearLayout) findViewById(R.id.llFileInfo);
         btPreview = (Button) findViewById(R.id.btPreview);
         btHistory = (ImageView) findViewById(R.id.btHistory);
-
+        btSearch = (ImageView) findViewById(R.id.btSearch);
         llFileInfo.setVisibility(View.GONE);
         btSelectTargetFolder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,8 +163,16 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         btHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ExtractHistory.class);
-                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                startActivityForResult(intent , MY_FILE_CODE );
+            }
+        });
+
+        btSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivityForResult(intent , MY_FILE_CODE );
             }
         });
     }
