@@ -87,9 +87,10 @@ public class SearchActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             while (!files.isEmpty()) {
                 File file = files.poll();
-                if (file.isFile() && file.getPath().endsWith(".rar")) {
+                if (file.isFile() && ((file.getPath().endsWith(".rar") || file.getPath().endsWith(".zip"))))
+                {
                     publishProgress(file.getPath());
-                } else if (!file.isFile() && file.listFiles().length > 0) {
+                }else if (!file.isFile() && file.listFiles().length > 0) {
                     for (File file1 : file.listFiles()) {
                         files.add(file1);
                     }

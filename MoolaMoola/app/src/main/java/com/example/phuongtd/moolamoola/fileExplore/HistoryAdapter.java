@@ -9,7 +9,10 @@ import android.widget.TextView;
 
 import com.example.phuongtd.moolamoola.R;
 import com.example.phuongtd.moolamoola.file.HistoryItem;
+import com.example.phuongtd.moolamoola.file.HistoryItemView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,9 +20,9 @@ import java.util.List;
  */
 public class HistoryAdapter extends BaseAdapter {
     Context context;
-    List<HistoryItem> extractHistories;
+    List<HistoryItemView> extractHistories;
 
-    public HistoryAdapter(Context context, List<HistoryItem> extractHistoryList) {
+    public HistoryAdapter(Context context, List<HistoryItemView> extractHistoryList) {
         this.context = context;
         this.extractHistories = extractHistoryList;
     }
@@ -46,9 +49,11 @@ public class HistoryAdapter extends BaseAdapter {
         }
         TextView tvPath = (TextView) convertView.findViewById(R.id.tvFilePath);
         TextView tvTime = (TextView) convertView.findViewById(R.id.tvTime);
-        HistoryItem extractHistory = extractHistories.get(position);
+        HistoryItemView extractHistory = extractHistories.get(position);
         tvPath.setText(extractHistory.getFilePath());
-        tvTime.setText(extractHistory.getTime());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm - dd MMM");
+        Date date = new Date(extractHistory.getTime());
+        tvTime.setText(simpleDateFormat.format(date));
         return convertView;
     }
 }

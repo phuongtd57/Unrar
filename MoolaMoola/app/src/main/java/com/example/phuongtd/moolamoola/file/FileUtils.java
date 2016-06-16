@@ -30,10 +30,10 @@ public class FileUtils {
                 childObject.setVolume(FileUtils.getFileLength(file));
             }
             if (!file.isFile()) {
-                if (file.listFiles()!= null && file.listFiles().length > 0) {
+                if (file.listFiles() != null && file.listFiles().length > 0) {
                     child.add(childObject);
                 }
-            } else if (childObject.getName().endsWith(".rar")) {
+            } else if (childObject.getName().endsWith(".rar") || childObject.getName().endsWith(".zip")) {
                 child.add(childObject);
             }
         }

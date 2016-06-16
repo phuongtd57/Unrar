@@ -123,6 +123,7 @@
                     android:id="@+id/tvFileSelect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_toLeftOf="@+id/btSelectRarFile"
@@ -155,6 +156,7 @@
                 <EditText
                     android:id="@+id/tvFolderTarget"
                     android:layout_width="match_parent"
+                    android:focusableInTouchMode="true"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
@@ -250,6 +252,18 @@
                         android:textColor="#323232" />
 
                 </LinearLayout>
+
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/tvInternal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/tvExternal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

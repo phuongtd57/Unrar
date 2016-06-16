@@ -1,19 +1,24 @@
 package com.example.phuongtd.moolamoola.file;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
- * Created by qs109 on 6/10/2016.
+ * Created by qs109 on 6/16/2016.
  */
-public class HistoryItem extends RealmObject {
-    @PrimaryKey
+public class HistoryItemView {
     private String id;
     private String filePath;
     private String folderSave;
     private String name;
     private String status;
     private Long time;
+
+    public HistoryItemView(HistoryItem item) {
+        this.id = item.getId();
+        this.filePath = item.getFilePath();
+        this.folderSave = item.getFolderSave();
+        this.name = item.getName();
+        this.status = item.getStatus();
+        this.time = item.getTime();
+    }
 
     public String getId() {
         return id;
@@ -29,6 +34,14 @@ public class HistoryItem extends RealmObject {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getFolderSave() {
+        return folderSave;
+    }
+
+    public void setFolderSave(String folderSave) {
+        this.folderSave = folderSave;
     }
 
     public String getName() {
@@ -53,13 +66,5 @@ public class HistoryItem extends RealmObject {
 
     public void setTime(Long time) {
         this.time = time;
-    }
-
-    public String getFolderSave() {
-        return folderSave;
-    }
-
-    public void setFolderSave(String folderSave) {
-        this.folderSave = folderSave;
     }
 }

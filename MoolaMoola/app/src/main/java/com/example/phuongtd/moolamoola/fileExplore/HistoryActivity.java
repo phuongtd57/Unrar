@@ -12,8 +12,12 @@ import android.widget.Toast;
 import com.example.phuongtd.moolamoola.MainActivity;
 import com.example.phuongtd.moolamoola.R;
 import com.example.phuongtd.moolamoola.file.HistoryItem;
+import com.example.phuongtd.moolamoola.file.HistoryItemView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.realm.Realm;
@@ -37,7 +41,17 @@ public class HistoryActivity extends AppCompatActivity {
 
         realm = Realm.getInstance(HistoryActivity.this);
         historyItemList = realm.where(HistoryItem.class).findAll();
-        HistoryAdapter historyAdapter = new HistoryAdapter(HistoryActivity.this, historyItemList);
+        List<HistoryItemView> historyItemViews = new ArrayList<>();
+        for (HistoryItem historyItem : historyItemList) {
+            historyItemViews.add(new HistoryItemView(historyItem));
+        }
+        Collections.sort(historyItemViews, new Comparator<HistoryItemView>() {
+            @Override
+            public int compare(HistoryItemView lhs, HistoryItemView rhs) {
+                return rhs.getTime().compareTo(lhs.getTime());
+            }
+        });
+        HistoryAdapter historyAdapter = new HistoryAdapter(HistoryActivity.this, historyItemViews);
 
         listHistory.setAdapter(historyAdapter);
 

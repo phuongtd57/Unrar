@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,14 +29,19 @@ import com.example.phuongtd.moolamoola.fileExplore.FileExploreActivity;
 import com.example.phuongtd.moolamoola.fileExplore.PreviewActivity;
 import com.example.phuongtd.moolamoola.fileExplore.SearchActivity;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.exception.ZipExceptionConstants;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import de.innosystec.unrar.Archive;
@@ -70,7 +77,12 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     File f;
     Archive a;
     FileHeader fh;
+    TextView tvInternal;
+    TextView tvExternal;
+    // zip
 
+    ZipFile zipFile;
+    List fileHeaderList;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -87,6 +99,27 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         }
         initView();
         initChooseFolder();
+        //initStorageInfo();
+    }
+
+    private void initStorageInfo() {
+        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
+        long blockSize = statFs.getBlockSize();
+        long totalSize = (statFs.getBlockCount() * blockSize) / 1073741824;
+        long availableSize = statFs.getAvailableBlocks() * blockSize / 1073741824;
+        long freeSize = statFs.getFreeBlocks() * blockSize / 1073741824;
+
+        String internal  = "Internal storage use: "+ new BigDecimal((totalSize - freeSize)/totalSize).setScale(2).toString() +"%";
+        tvInternal.setText(internal);
+
+        statFs = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
+        blockSize = statFs.getBlockSize();
+        long totalSize2 = statFs.getBlockCount() * blockSize / 1073741824;
+        long availableSize2 = statFs.getAvailableBlocks() * blockSize / 1073741824;
+        long  freeSize2 = statFs.getFreeBlocks() * blockSize / 1073741824;
+
+        String external  = "External storage use: "+ new BigDecimal((totalSize - freeSize)/totalSize).setScale(2).toString() +"%";
+        tvExternal.setText(external);
     }
 
     private void initChooseFolder() {
@@ -99,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
     }
 
     void initView() {
+        tvInternal = (TextView) findViewById(R.id.tvInternal);
+        tvExternal = (TextView) findViewById(R.id.tvExternal);
         btSelectRarFile = (Button) findViewById(R.id.btSelectRarFile);
         btSelectTargetFolder = (Button) findViewById(R.id.btSelectTargetFolder);
         tvFileSelect = (EditText) findViewById(R.id.tvFileSelect);
@@ -131,18 +166,27 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
             @Override
             public void onClick(View v) {
                 if (uriFile == null) {
-                    Toast.makeText(MainActivity.this, "Please choose  file", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Please choose file", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (!uriFile.endsWith(".rar")) {
-                    Toast.makeText(MainActivity.this, "Please choose .rar file", Toast.LENGTH_LONG).show();
+                if (!(uriFile.endsWith(".rar") || uriFile.endsWith(".zip"))) {
+                    Toast.makeText(MainActivity.this, "Please choose compress file", Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (!hasChooseFolder) {
                     Toast.makeText(MainActivity.this, "Please choose folder to save file", Toast.LENGTH_LONG).show();
                     return;
                 }
-                new MyAsync().execute();
+                if (uriFile.endsWith(".rar")) {
+                    new MyAsync().execute();
+                } else {
+                    try {
+                        zipFile = new ZipFile(uriFile);
+                    } catch (ZipException e) {
+                        e.printStackTrace();
+                    }
+                    new MyAsyncZip().execute();
+                }
             }
         });
 
@@ -164,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-                startActivityForResult(intent , MY_FILE_CODE );
+                startActivityForResult(intent, MY_FILE_CODE);
             }
         });
 
@@ -172,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                startActivityForResult(intent , MY_FILE_CODE );
+                startActivityForResult(intent, MY_FILE_CODE);
             }
         });
     }
@@ -318,9 +362,9 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
                     eh.setFilePath(uriFile);
                     eh.setFolderSave(targetFolder);
                     eh.setStatus("SUCCESS");
-                    Date date = new Date();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm - dd MMM");
-                    eh.setTime(simpleDateFormat.format(date));
+                   /* Date date = new Date();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm - dd MMM");*/
+                    eh.setTime(System.currentTimeMillis());
                     realm.copyToRealm(eh);
                 } finally {
                     realm.commitTransaction();
@@ -334,6 +378,119 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
                     public void execute(String pass) {
                         password = pass;
                         new MyAsync().execute();
+                    }
+                });
+                passwordDialog.show();
+            } else {
+                Toast.makeText(MainActivity.this, aVoid, Toast.LENGTH_SHORT).show();
+            }
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            numberProgressBar.setProgress(values[0]);
+        }
+
+
+    }
+
+    public class MyAsyncZip extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+            //File dir = Environment.getExternalStorageDirectory();
+            progressBar.setVisibility(View.VISIBLE);
+            numberProgressBar.setVisibility(View.VISIBLE);
+            try {
+                fileHeaderList = zipFile.getFileHeaders();
+            } catch (ZipException e) {
+                e.printStackTrace();
+            }
+            currentExtractFile = 0;
+            numOfFile = fileHeaderList.size();
+            numberProgressBar.setMax(numOfFile);
+            numberProgressBar.setProgress(currentExtractFile);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                if (zipFile != null) {
+                    for (int i = 0; i < fileHeaderList.size(); i++) {
+                        net.lingala.zip4j.model.FileHeader fileHeader = (net.lingala.zip4j.model.FileHeader) fileHeaderList.get(i);
+                        String fileName = fileHeader.getFileName();
+                        if (fileName.trim().endsWith("/")) {
+                            String[] listName = fileName.split("/");
+                            String longName = listName[0];
+                            File folder = new File(targetFolder + "/" + longName);
+                            if (!folder.exists()) {
+                                folder.mkdir();
+                            }
+                            for (int j = 1; j <= listName.length - 2; j++) {
+                                longName = longName + "/" + listName[j];
+                                folder = new File(targetFolder + "/" + longName);
+                                if (!folder.exists()) {
+                                    folder.mkdir();
+                                }
+                            }
+                        }
+                    }
+                    int j = 1;
+                    for (int i = fileHeaderList.size() - 1; i >= 0; i--) {
+                        net.lingala.zip4j.model.FileHeader fileHeader = (net.lingala.zip4j.model.FileHeader) fileHeaderList.get(i);
+                        zipFile.extractFile(fileHeader, targetFolder);
+                        publishProgress(j);
+                        j = j + 1;
+                    }
+                }
+            } catch (ZipException e) {
+                e.printStackTrace();
+                if (e.getCode() == -1) {
+                    return FILE_HAVE_PASS;
+                } else {
+                    return "Cant extract this file";
+                }
+            }
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String aVoid) {
+            super.onPostExecute(aVoid);
+            if (aVoid.equalsIgnoreCase("")) {
+                Toast.makeText(MainActivity.this, "Extract successfully", Toast.LENGTH_SHORT).show();
+
+                Realm realm = Realm.getInstance(MainActivity.this);
+                try {
+                    realm.beginTransaction();
+                    HistoryItem eh = new HistoryItem();
+                    eh.setId(UUID.randomUUID().toString());
+                    eh.setName(uriFile);
+                    eh.setFilePath(uriFile);
+                    eh.setFolderSave(targetFolder);
+                    eh.setStatus("SUCCESS");
+                    /*Date date = new Date();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm - dd MMM");*/
+                    eh.setTime(System.currentTimeMillis());
+                    realm.copyToRealm(eh);
+                } finally {
+                    realm.commitTransaction();
+                    realm.close();
+                }
+
+
+            } else if (aVoid.equalsIgnoreCase(FILE_HAVE_PASS)) {
+                PasswordDialog passwordDialog = new PasswordDialog(MainActivity.this, new PasswordDialog.ActionImpl() {
+                    @Override
+                    public void execute(String pass) {
+                        try {
+                            zipFile.setPassword(pass);
+                        } catch (ZipException e) {
+                            e.printStackTrace();
+                        }
+                        new MyAsyncZip().execute();
                     }
                 });
                 passwordDialog.show();
