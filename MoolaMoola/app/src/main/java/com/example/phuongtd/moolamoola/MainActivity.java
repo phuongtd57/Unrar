@@ -1,6 +1,7 @@
 package com.example.phuongtd.moolamoola;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -99,27 +100,6 @@ public class MainActivity extends AppCompatActivity implements DirectoryChooserF
         }
         initView();
         initChooseFolder();
-        //initStorageInfo();
-    }
-
-    private void initStorageInfo() {
-        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-        long blockSize = statFs.getBlockSize();
-        long totalSize = (statFs.getBlockCount() * blockSize) / 1073741824;
-        long availableSize = statFs.getAvailableBlocks() * blockSize / 1073741824;
-        long freeSize = statFs.getFreeBlocks() * blockSize / 1073741824;
-
-        String internal  = "Internal storage use: "+ new BigDecimal((totalSize - freeSize)/totalSize).setScale(2).toString() +"%";
-        tvInternal.setText(internal);
-
-        statFs = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        blockSize = statFs.getBlockSize();
-        long totalSize2 = statFs.getBlockCount() * blockSize / 1073741824;
-        long availableSize2 = statFs.getAvailableBlocks() * blockSize / 1073741824;
-        long  freeSize2 = statFs.getFreeBlocks() * blockSize / 1073741824;
-
-        String external  = "External storage use: "+ new BigDecimal((totalSize - freeSize)/totalSize).setScale(2).toString() +"%";
-        tvExternal.setText(external);
     }
 
     private void initChooseFolder() {
